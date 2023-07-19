@@ -8,6 +8,9 @@ This Python code performs sentiment analysis using a rule-based method. It analy
 import pandas as pd
 import nltk
 from nltk.tokenize import word_tokenize
+import string
+
+nltk.download('punkt')
 
 positive_words = ['good', 'great', 'excellent', 'awesome', 'happy']
 negative_words = ['bad', 'terrible', 'horrible', 'awful', 'sad']
@@ -18,21 +21,22 @@ In this section, we import the required libraries: pandas for data manipulation,
 ## Sentiment Analysis Function
 
 ```python
-def sentiment_analysis(text):
-    tokens = word_tokenize(text)
+def calculate_sentiment_score(text):
+    tokens = word_tokenize(text.lower())
     sentiment_score = 0
     for token in tokens:
+        token = token.strip(string.punctuation)
         if token in positive_words:
             sentiment_score += 1
         elif token in negative_words:
             sentiment_score -= 1
+    return sentiment_score
 
-    if sentiment_score > 0:
-        return 'Positive'
-    elif sentiment_score < 0:
-        return 'Negative'
-    else:
-        return 'Neutral'
+def map_to_0_to_100(score):
+    max_score = 5
+    min_score = -5
+    scaled_score = ((score - min_score) / (max_score - min_score)) * 100
+    return min(max(scaled_score, 0), 100)
 ```
 
 The sentiment_analysis function takes a text input as a parameter and performs sentiment analysis on that text. It first tokenizes the input text into individual words using word_tokenize from NLTK. Then, it calculates a sentiment score by counting the occurrences of positive and negative words. If a word is found in the positive_words list, the sentiment score is increased by 1, and if a word is found in the negative_words list, the sentiment score is decreased by 1. The function returns the sentiment label as 'Positive', 'Negative', or 'Neutral' based on the sentiment score.
@@ -41,8 +45,9 @@ The sentiment_analysis function takes a text input as a parameter and performs s
 
 ```python
 # Assuming you have the dataset in a CSV file named 'file.csv'
-df = pd.read_csv('path/to/your/file.csv')
-df['Sentiment'] = df['Text'].apply(sentiment_analysis)
+df = pd.read_csv(r'C:\Users\akagr\OneDrive\Desktop\XtraLeap\Sentimental Analysis\dataset.csv')
+df['Sentiment_Score'] = df['Text'].apply(calculate_sentiment_score)
+df['Sentiment_Score'] = df['Sentiment_Score'].apply(map_to_0_to_100)
 print(df)
 ```
 
@@ -79,10 +84,10 @@ The weather is great today.
 ```
 After running the code, the DataFrame will be updated as follows:
 ```mathematica
-Text                             | Sentiment
-This is a good movie.            | Positive
-I feel terrible about the news.  | Negative
-The weather is great today.      | Positive
+                            Text    Sentiment_Score
+0            This is a good movie.             60.0
+1  I feel terrible about the news.             40.0
+2      The weather is great today.             60.0
 ```
 
 ## Contributing
