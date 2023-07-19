@@ -12,8 +12,9 @@ import string
 
 nltk.download('punkt')
 
-positive_words = ['good', 'great', 'excellent', 'awesome', 'happy']
-negative_words = ['bad', 'terrible', 'horrible', 'awful', 'sad']
+positive_words = ['good', 'thankyou' , 'great', 'pdf', 'excellent', 'awesome', 'happy', 'enjoying', 'excited', 'collaborative', 'productive', 'good luck', 'safe', 'joined', ':+1:', ':heart:', ':relaxed:', ':tada:']
+negative_words = ['bad', 'terrible', 'horrible', 'awful', 'sad', 'disappointing', 'dreadful', 'annoying', 'frustrating', 'unpleasant', 'frustrating']
+
 ```
 
 In this section, we import the required libraries: pandas for data manipulation, nltk (Natural Language Toolkit) for natural language processing, and specifically, word_tokenize from nltk.tokenize to tokenize the text into words. We also define two lists, positive_words and negative_words, which contain words associated with positive and negative sentiments, respectively.
@@ -22,21 +23,28 @@ In this section, we import the required libraries: pandas for data manipulation,
 
 ```python
 def calculate_sentiment_score(text):
-    tokens = word_tokenize(text.lower())
-    sentiment_score = 0
-    for token in tokens:
-        token = token.strip(string.punctuation)
-        if token in positive_words:
-            sentiment_score += 1
-        elif token in negative_words:
-            sentiment_score -= 1
-    return sentiment_score
+    if pd.notnull(text):
+        tokens = word_tokenize(text.lower())
+        sentiment_score = 0
+        for token in tokens:
+            token = token.strip(string.punctuation)
+            if token in positive_words:
+                sentiment_score += 1
+            elif token in negative_words:
+                sentiment_score -= 1
+        return sentiment_score
+    return 0
 
 def map_to_0_to_100(score):
     max_score = 5
     min_score = -5
     scaled_score = ((score - min_score) / (max_score - min_score)) * 100
     return min(max(scaled_score, 0), 100)
+
+def calculate_name_sentiment_score(name_group):
+    sentiment_scores = name_group['Text'].apply(calculate_sentiment_score)
+    aggregated_score = sentiment_scores.sum()
+    return map_to_0_to_100(aggregated_score)
 ```
 
 The sentiment_analysis function takes a text input as a parameter and performs sentiment analysis on that text. It first tokenizes the input text into individual words using word_tokenize from NLTK. Then, it calculates a sentiment score by counting the occurrences of positive and negative words. If a word is found in the positive_words list, the sentiment score is increased by 1, and if a word is found in the negative_words list, the sentiment score is decreased by 1. The function returns the sentiment label as 'Positive', 'Negative', or 'Neutral' based on the sentiment score.
@@ -47,8 +55,10 @@ The sentiment_analysis function takes a text input as a parameter and performs s
 # Assuming you have the dataset in a CSV file named 'file.csv'
 df = pd.read_csv(r'C:\Users\akagr\OneDrive\Desktop\XtraLeap\Sentimental Analysis\dataset.csv')
 df['Sentiment_Score'] = df['Text'].apply(calculate_sentiment_score)
-df['Sentiment_Score'] = df['Sentiment_Score'].apply(map_to_0_to_100)
-print(df)
+name_scores = df.groupby('Name').apply(calculate_name_sentiment_score).reset_index()
+name_scores.columns = ['Name', 'Name_Sentiment_Score']
+
+print(name_scores)
 ```
 
 This section assumes that you have the dataset in a CSV file named 'file.csv'. You should replace 'path/to/your/file.csv' with the actual file path where your dataset is located. The code reads the CSV file into a pandas DataFrame (df). Then, it applies the sentiment_analysis function to each text in the 'Text' column of the DataFrame and stores the sentiment analysis results in a new column named 'Sentiment'. Finally, the DataFrame with the added 'Sentiment' column is printed to display the results.
@@ -84,10 +94,16 @@ The weather is great today.
 ```
 After running the code, the DataFrame will be updated as follows:
 ```mathematica
-                            Text    Sentiment_Score
-0            This is a good movie.             60.0
-1  I feel terrible about the news.             40.0
-2      The weather is great today.             60.0
+      Name  Name_Sentiment_Score
+0  jahnavi                  60.0
+1  jayasai                  50.0
+2  karthik                  60.0
+3  keerthi                  50.0
+4    mehak                  60.0
+5   nikhil                  60.0
+6   pranav                  60.0
+7   sameer                  60.0
+8   sushma                  50.0
 ```
 
 ## Contributing
