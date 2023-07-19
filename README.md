@@ -114,9 +114,6 @@ After running the code, the DataFrame will be updated as follows:
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-##License
-This project is licensed under the MIT License.
-
 ```css
 You can now save this content in the `README.md` file of your GitHub repository. This Markdown file includes explanations, code snippets, and an example to provide a clear understanding of the sentiment analysis code.
 ```
