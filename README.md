@@ -89,7 +89,7 @@ Suppose you have a CSV file named data.csv with the following content:
 ```vbnet
 karthik	Sure sir we will tell the rest of the members to join, if everyone will be free at some time tomorrow we will take a group pic and send you.Sentimental Analysis.pdfwe are on it sirSentimental Analysis (1).pdf
 keerthi	
-sushma	Sure sir we will work on it together.Good evening, Siva. I hope this message finds you well. I would like to provide you with the results of my research on rule-based models for sentiment analysis. Here are the results(I have taken the help of chat Gpt to understand the model & the results are based on my understanding of the rule-based model )
+sushma	Sure sir we will work on it together.Good evening, Siva. I hope this message finds you well. I would like to provide you with the results of my research on rule-based models for sentiment analysis. Here are the results(I have taken the help of chat Gpt to understand the model & the results are based on my understanding of the rule-based model ).pdf
 nikhil	Okay that would be great, thank you.
 pranav	pdf
 sameer	Siva I am interested in learning, but I don't know anyone learning this. pdf
@@ -108,7 +108,7 @@ After running the code, the DataFrame will be updated as follows:
 5   nikhil                  60.0
 6   pranav                  60.0
 7   sameer                  60.0
-8   sushma                  50.0
+8   sushma                  60.0
 ```
 
 ## Contributing
