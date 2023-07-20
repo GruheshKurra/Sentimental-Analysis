@@ -12,7 +12,7 @@ import string
 
 nltk.download('punkt')
 
-positive_words = ['good', 'thankyou' , 'great', 'pdf', 'excellent', 'awesome', 'happy', 'enjoying', 'excited', 'collaborative', 'productive', 'good luck', 'safe', 'joined', ':+1:', ':heart:', ':relaxed:', ':tada:']
+positive_words = ['good', 'together' , 'pdf' , 'excellent', 'awesome', 'happy', 'enjoying', 'excited', 'collaborative', 'productive', 'good luck', 'safe', 'joined', ':+1:', ':heart:', ':relaxed:', ':tada:']
 negative_words = ['bad', 'terrible', 'horrible', 'awful', 'sad', 'disappointing', 'dreadful', 'annoying', 'frustrating', 'unpleasant', 'frustrating']
 
 ```
@@ -43,8 +43,13 @@ def map_to_0_to_100(score):
 
 def calculate_name_sentiment_score(name_group):
     sentiment_scores = name_group['Text'].apply(calculate_sentiment_score)
-    aggregated_score = sentiment_scores.sum()
-    return map_to_0_to_100(aggregated_score)
+    message_lengths = name_group['Text'].str.len()
+    
+    if message_lengths.sum() > 0:
+        weighted_score = (sentiment_scores * message_lengths).sum() / message_lengths.sum()
+        return map_to_0_to_100(weighted_score)
+    else:
+        return 0
 ```
 
 The sentiment_analysis function takes a text input as a parameter and performs sentiment analysis on that text. It first tokenizes the input text into individual words using word_tokenize from NLTK. Then, it calculates a sentiment score by counting the occurrences of positive and negative words. If a word is found in the positive_words list, the sentiment score is increased by 1, and if a word is found in the negative_words list, the sentiment score is decreased by 1. The function returns the sentiment label as 'Positive', 'Negative', or 'Neutral' based on the sentiment score.
@@ -52,13 +57,15 @@ The sentiment_analysis function takes a text input as a parameter and performs s
 ## Performing Sentiment Analysis on Dataset
 
 ```python
-# Assuming you have the dataset in a CSV file named 'file.csv'
+# Assuming you have the dataset in a CSV file named 'dataset.csv'
 df = pd.read_csv(r'C:\Users\akagr\OneDrive\Desktop\XtraLeap\Sentimental Analysis\dataset.csv')
 df['Sentiment_Score'] = df['Text'].apply(calculate_sentiment_score)
 name_scores = df.groupby('Name').apply(calculate_name_sentiment_score).reset_index()
 name_scores.columns = ['Name', 'Name_Sentiment_Score']
+name_scores = name_scores[name_scores['Name_Sentiment_Score'] > 0]
 
 print(name_scores)
+
 ```
 
 This section assumes that you have the dataset in a CSV file named 'file.csv'. You should replace 'path/to/your/file.csv' with the actual file path where your dataset is located. The code reads the CSV file into a pandas DataFrame (df). Then, it applies the sentiment_analysis function to each text in the 'Text' column of the DataFrame and stores the sentiment analysis results in a new column named 'Sentiment'. Finally, the DataFrame with the added 'Sentiment' column is printed to display the results.
@@ -102,13 +109,9 @@ jayasai
 After running the code, the DataFrame will be updated as follows:
 ```mathematica
       Name  Name_Sentiment_Score
-0  jahnavi                  60.0
-1  jayasai                  50.0
 2  karthik                  60.0
-3  keerthi                  50.0
 4    mehak                  60.0
-5   nikhil                  60.0
-6   pranav                  60.0
+5   nikhil                  50.0
 7   sameer                  60.0
 8   sushma                  60.0
 ```
